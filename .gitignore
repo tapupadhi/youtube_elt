@@ -17,3 +17,4 @@ __pycache__/
 *.der
 *.p12
 *.pfx
+.env
