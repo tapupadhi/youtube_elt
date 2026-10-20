@@ -10,7 +10,7 @@ def insert_rows(cursor, conn, schema, row):
 
             cursor.execute(
                 f"""INSERT INTO {schema}.{table}("Video_ID", "Video_Title", "Upload_Date", "Duration", "Video_Views", "Likes_Count", "Comments_Count")
-                VALUES (%(video_id)s, %(title)s, %(published_at)s, %(duration)s, %(view_count)s, %(like_count)s, %(comments_count)s);
+                VALUES (%(video_id)s, %(title)s, %(published_at)s, %(duration)s, %(view_count)s, %(like_count)s, %(comment_count)s);
                 """, row
             )
         else:
@@ -38,7 +38,7 @@ def update_rows(cursor, conn, schema, row):
             video_title = 'title'
             video_views = 'view_count'
             likes_count = 'like_count'
-            comments_count = 'comments_count'
+            comments_count = 'comment_count'
         # core
         else:
             video_id = 'Video_ID'
@@ -67,12 +67,10 @@ def update_rows(cursor, conn, schema, row):
 
 def delete_rows(cursor, conn, schema, ids_to_delete):
     try:
-        ids_to_delete = f"({', '.join(map(str, ids_to_delete))})"
-
         cursor.execute(
             f"""DELETE FROM {schema}.{table}
-            WHERE "Video_ID" IN {ids_to_delete};
-            """
+            WHERE "Video_ID" = ANY(%s);
+            """, (list(ids_to_delete),)
         )
         conn.commit()
 

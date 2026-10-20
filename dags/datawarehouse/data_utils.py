@@ -58,4 +58,4 @@ def create_table(schema):
 def get_video_ids(cursor, schema):
     query = f'SELECT "Video_ID" FROM {schema}.{table};'
     cursor.execute(query)
-    return [row["Video_ID"] for row in cursor.fetchall()]
+    return {row["Video_ID"] for row in cursor.fetchall()}

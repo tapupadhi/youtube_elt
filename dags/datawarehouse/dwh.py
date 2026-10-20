@@ -70,14 +70,14 @@ def core_table():
         rows = cur.fetchall()
 
         for row in rows:
-            current_video_ids.add(row['Video_Id'])
+            current_video_ids.add(row['Video_ID'])
 
             if len(table_ids) == 0:
                 transformed_row = transform_data(row)
                 insert_rows(cur, conn, schema, transformed_row)
             else:
                 transformed_row = transform_data(row)
-                if transformed_row['Video_Id'] in table_ids:
+                if transformed_row['Video_ID'] in table_ids:
                     update_rows(cur, conn, schema, transformed_row)
                 else:
                     insert_rows(cur, conn, schema, transformed_row)
