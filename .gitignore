@@ -18,3 +18,4 @@ __pycache__/
 *.p12
 *.pfx
 .env
+logs/
