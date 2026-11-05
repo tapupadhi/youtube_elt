@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^docker exec airflow-scheduler airflow dags trigger update_db 2>&1 \\| Out-Null; Start-Sleep 45; docker exec airflow-scheduler airflow dags list-runs -d update_db 2>&1 \\| Select-Object -First 3; docker exec airflow-scheduler airflow tasks states-for-run update_db \\(docker exec airflow-scheduler airflow dags list-runs -d update_db -o plain 2>&1 \\| Select-Object -First 1 \\| ForEach-Object \\{ \\(\\$_ -split '\\\\s\\+'\\)\\[1\\] \\}\\) 2>&1 \\| Select-Object -First 6$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}
