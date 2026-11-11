@@ -21,19 +21,20 @@ jobs:
               uses: tj-actions/changed-files@v45
               with:
                 files: |
+                  dockerfile
                   Dockerfile
                   requirements.txt
             - name: Set up Docker Buildx
-              if: steps.changed-files-build.outputs.any_changed == 'true'
+              if: steps.changed-files-build.outputs.any_changed == 'true' || github.event_name == 'workflow_dispatch'
               uses: docker/setup-buildx-action@v3
             - name: Log in to Dockerhub
-              if: steps.changed-files-build.outputs.any_changed == 'true'
+              if: steps.changed-files-build.outputs.any_changed == 'true' || github.event_name == 'workflow_dispatch'
               uses: docker/login-action@v3
               with:
                 username: ${{ vars.DOCKERHUB_USERNAME }}
                 password: ${{ secrets.DOCKERHUB_PASSWORD }}
             - name: Build and push Docker image
-              if: steps.changed-files-build.outputs.any_changed == 'true'
+              if: steps.changed-files-build.outputs.any_changed == 'true' || github.event_name == 'workflow_dispatch'
               run: |
                 docker buildx build --push \
                     --tag ${{ vars.DOCKERHUB_NAMESPACE }}/${{ vars.DOCKERHUB_REPOSITORY }}:latest \
@@ -59,8 +60,8 @@ jobs:
             METADATA_DATABASE_PASSWORD: ${{ secrets.METADATA_DATABASE_PASSWORD }}
             POSTGRES_CONN_HOST: ${{ secrets.POSTGRES_CONN_HOST }}
             POSTGRES_CONN_PORT: ${{ secrets.POSTGRES_CONN_PORT }}
-            POSTGRES_USER: ${{ secrets.POSTGRES_CONN_USERNAME }}
-            POSTGRES_PASSWORD: ${{ secrets.POSTGRES_CONN_PASSWORD }}
+            POSTGRES_CONN_USERNAME: ${{ secrets.POSTGRES_CONN_USERNAME }}
+            POSTGRES_CONN_PASSWORD: ${{ secrets.POSTGRES_CONN_PASSWORD }}
             AIRFLOW_UID: ${{ vars.AIRFLOW_UID }}
             CHANNEL_HANDLE: ${{ vars.CHANNEL_HANDLE }}
             DOCKERHUB_NAMESPACE: ${{ vars.DOCKERHUB_NAMESPACE }}
@@ -87,7 +88,7 @@ jobs:
             - name: Run End-to-End DAG Tests
               if: steps.changed-files-tests.outputs.any_changed == 'true'
               run: |
-                DAG_NAMES=("produce_json", "update_db", "data_quality")
+                DAG_NAMES=("produce_json" "update_db" "data_quality")
                 for DAG in "${DAG_NAMES[@]}"; do
                   docker exec -t airflow-worker sh -c "airflow dags test $DAG"
                 done
